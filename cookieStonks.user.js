@@ -1,12 +1,12 @@
 // ==UserScript==
-// @name         Cookie Stonks
+// @name         Cookie Stonks Does It Work
 // @namespace    http://tampermonkey.net/
 // @version      1.4
 // @description  Cookie Clicker Stock Market Helper
 // @author       Sui
 // @match        https://orteil.dashnet.org/cookieclicker/
 // @homepageURL  https://github.com/suicidejerk/Cookie-Stonks
-// @supportURL   https://github.com/suicidejerk/Cookie-Stonks/issues
+// @supportURL   https://github.com/suicidejerk/Cookie-/issues
 // @updateURL    https://raw.githubusercontent.com/suicidejerk/Cookie-Stonks/master/cookieStonks.user.js
 // @icon         https://raw.githubusercontent.com/suicidejerk/Cookie-Stonks/main/cookieDollar.png
 // @license      MIT
@@ -123,19 +123,19 @@ function addRestingElement(ele, owned, ownedMax, id, bankLevel, brokers) {
 
     let restingElementDiff = document.createElement("span");
     let difference = getRestingDifference(id, ele.innerText, bankLevel);
-    restingElementDiff.innerText = difference + "%";
+    restingElementDiff.innerText = "$" + difference;
     restingElementDiff.className = "restingElement";
     restingElementDiff.id = "restingElementDiff-" + id;
 
     let overhead = getOverhead(brokers);
     let bgR, bgG, bgB;
-    if (difference >= 150) {
+    if (difference >= 15) {
         [bgR, bgG, bgB] = getColorMode(difference - 100, owned, ownedMax, "positive2", difference, overhead);
         restingElementDiff.style = "font-weight:bold;color:#FFF;background-color:rgb(" + bgR + "," + bgG + "," + bgB + ")";
-    } else if (difference >= 100) {
+    } else if (difference >= 0) {
         [bgR, bgG, bgB] = getColorMode(difference - 100, owned, ownedMax, "positive1", difference, overhead);
         restingElementDiff.style = "font-weight:bold;color:#FFF;background-color:rgb(" + bgR + "," + bgG + "," + bgB + ")";
-    } else if (difference >= 95) {
+    } else if (difference >= -25) {
         [bgR, bgG, bgB] = getColorMode(100 - difference, owned, ownedMax, "negative2", difference, overhead);
         restingElementDiff.style = "font-weight:bold;color:#FFF;background-color:rgb(" + bgR + "," + bgG + "," + bgB + ")";
     } else {
@@ -215,7 +215,7 @@ function createOptionsElements() {
     // Title
     let titleOptions = document.createElement("div");
     titleOptions.className = "title";
-    titleOptions.innerText = "Cookie Stonks";
+    titleOptions.innerText = "Cookie Stonks by Bonks";
     divOptions.append(titleOptions);
 
     // Big Div
@@ -418,7 +418,7 @@ function createOptionsElements() {
     // Percentage Sliderbox Golden
     let perSliderGolden = document.createElement("div");
     perSliderGolden.style = "float: right";
-    perSliderGolden.innerText = ">=" + goldenShimmer + "%";
+    perSliderGolden.innerText = ">=" + "$" + goldenShimmer;
     sliderGolden.append(perSliderGolden);
 
     // Slider Golden
@@ -426,13 +426,13 @@ function createOptionsElements() {
     actualSliderGolden.className = "slider";
     actualSliderGolden.style = "clear: both";
     actualSliderGolden.type = "range";
-    actualSliderGolden.min = "100";
-    actualSliderGolden.max = "200";
+    actualSliderGolden.min = "1";
+    actualSliderGolden.max = "100";
     actualSliderGolden.value = goldenShimmer;
     actualSliderGolden.step = "1";
     actualSliderGolden.oninput = function() {
         goldenShimmer = this.value;
-        perSliderGolden.innerText = ">=" + goldenShimmer + "%";
+        perSliderGolden.innerText = ">=" + "$" + goldenShimmer;
         localStorage["goldenShimmer"] = goldenShimmer;
         // Remove all canvases/shimmers
         for (let id = 0; id <= 15; id++) {
@@ -466,7 +466,7 @@ function createOptionsElements() {
     // Percentage Sliderbox Wrath
     let perSliderWrath = document.createElement("div");
     perSliderWrath.style = "float: right";
-    perSliderWrath.innerText = "<=" + wrathShimmer + "%";
+    perSliderWrath.innerText = "<=" + "$" + wrathShimmer ;
     sliderWrath.append(perSliderWrath);
 
     // Slider Wrath
@@ -474,8 +474,8 @@ function createOptionsElements() {
     actualSliderWrath.className = "slider";
     actualSliderWrath.style = "clear: both";
     actualSliderWrath.type = "range";
-    actualSliderWrath.min = "1";
-    actualSliderWrath.max = "99";
+    actualSliderWrath.min = "-100";
+    actualSliderWrath.max = "-1";
     actualSliderWrath.value = wrathShimmer;
     actualSliderWrath.step = "1";
     actualSliderWrath.oninput = function() {
