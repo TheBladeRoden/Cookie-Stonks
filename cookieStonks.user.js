@@ -53,7 +53,7 @@ function getOverhead(brokers) {
 
 function getRestingDifference(id, value, bankLevel) {
     let restingValue = getRestingValue(id, bankLevel);
-    let difference = (parseFloat(value.replace('$', '')) / restingValue * 100).toFixed(0);
+    let difference = (parseFloat(value.replace('$', '')) - restingValue ).toFixed(0);
 
     return difference;
 }
