@@ -1,12 +1,12 @@
 // ==UserScript==
-// @name         Cookie Stonks Does It Work
+// @name         Cookie Stonks by Bonks
 // @namespace    http://tampermonkey.net/
 // @version      1.4
 // @description  Cookie Clicker Stock Market Helper
 // @author       Sui
 // @match        https://orteil.dashnet.org/cookieclicker/
 // @homepageURL  https://github.com/suicidejerk/Cookie-Stonks
-// @supportURL   https://github.com/suicidejerk/Cookie-/issues
+// @supportURL   https://github.com/suicidejerk/Cookie-Stonks/issues
 // @updateURL    https://raw.githubusercontent.com/suicidejerk/Cookie-Stonks/master/cookieStonks.user.js
 // @icon         https://raw.githubusercontent.com/suicidejerk/Cookie-Stonks/main/cookieDollar.png
 // @license      MIT
@@ -53,9 +53,16 @@ function getOverhead(brokers) {
 
 function getRestingDifference(id, value, bankLevel) {
     let restingValue = getRestingValue(id, bankLevel);
-    let difference = (parseFloat(value.replace('$', '')) - restingValue ).toFixed(0);
+    let difference = (parseFloat(value.replace('$', '')) / restingValue * 100).toFixed(0);
 
     return difference;
+}
+
+function getRestingDifference2(id, value, bankLevel) {
+    let restingValue = getRestingValue(id, bankLevel);
+    let difference2 = (parseFloat(value.replace('$', '')) - restingValue).toFixed(0);
+
+    return difference2;
 }
 
 function getColorMode(value, owned, ownedMax, mode, difference, overhead) {
@@ -123,19 +130,20 @@ function addRestingElement(ele, owned, ownedMax, id, bankLevel, brokers) {
 
     let restingElementDiff = document.createElement("span");
     let difference = getRestingDifference(id, ele.innerText, bankLevel);
-    restingElementDiff.innerText = "$" + difference;
+ 		let difference2 = getRestingDifference2(id, ele.innerText, bankLevel);
+    restingElementDiff.innerText = difference + "%";
     restingElementDiff.className = "restingElement";
     restingElementDiff.id = "restingElementDiff-" + id;
 
     let overhead = getOverhead(brokers);
     let bgR, bgG, bgB;
-    if (difference >= 15) {
+    if (difference2 >= 15) {
         [bgR, bgG, bgB] = getColorMode(difference - 100, owned, ownedMax, "positive2", difference, overhead);
         restingElementDiff.style = "font-weight:bold;color:#FFF;background-color:rgb(" + bgR + "," + bgG + "," + bgB + ")";
-    } else if (difference >= 0) {
+    } else if (difference >= 100) {
         [bgR, bgG, bgB] = getColorMode(difference - 100, owned, ownedMax, "positive1", difference, overhead);
         restingElementDiff.style = "font-weight:bold;color:#FFF;background-color:rgb(" + bgR + "," + bgG + "," + bgB + ")";
-    } else if (difference >= -25) {
+    } else if (difference >= 95) {
         [bgR, bgG, bgB] = getColorMode(100 - difference, owned, ownedMax, "negative2", difference, overhead);
         restingElementDiff.style = "font-weight:bold;color:#FFF;background-color:rgb(" + bgR + "," + bgG + "," + bgB + ")";
     } else {
@@ -178,7 +186,7 @@ function addRestingElement(ele, owned, ownedMax, id, bankLevel, brokers) {
         let shimmer = document.createElement("img");
 
         imageAppend.append(canvas);
-        if (difference >= topDiff && key1) {
+        if (difference2 >= topDiff && key1) {
             ctx.drawImage(shimmerGolden, 0, 0, 264, 150);
         } else if (difference <= bottomDiff && key2) {
             ctx.drawImage(shimmerWrath, 0, 0, 264, 150);
@@ -418,7 +426,7 @@ function createOptionsElements() {
     // Percentage Sliderbox Golden
     let perSliderGolden = document.createElement("div");
     perSliderGolden.style = "float: right";
-    perSliderGolden.innerText = ">=" + "$" + goldenShimmer;
+    perSliderGolden.innerText = ">=" + "+$" + goldenShimmer;
     sliderGolden.append(perSliderGolden);
 
     // Slider Golden
@@ -432,7 +440,7 @@ function createOptionsElements() {
     actualSliderGolden.step = "1";
     actualSliderGolden.oninput = function() {
         goldenShimmer = this.value;
-        perSliderGolden.innerText = ">=" + "$" + goldenShimmer;
+        perSliderGolden.innerText = ">=" + "+$" + goldenShimmer;
         localStorage["goldenShimmer"] = goldenShimmer;
         // Remove all canvases/shimmers
         for (let id = 0; id <= 15; id++) {
@@ -466,7 +474,7 @@ function createOptionsElements() {
     // Percentage Sliderbox Wrath
     let perSliderWrath = document.createElement("div");
     perSliderWrath.style = "float: right";
-    perSliderWrath.innerText = "<=" + "$" + wrathShimmer ;
+    perSliderWrath.innerText = "<=" + wrathShimmer + "%";
     sliderWrath.append(perSliderWrath);
 
     // Slider Wrath
@@ -474,8 +482,8 @@ function createOptionsElements() {
     actualSliderWrath.className = "slider";
     actualSliderWrath.style = "clear: both";
     actualSliderWrath.type = "range";
-    actualSliderWrath.min = "-100";
-    actualSliderWrath.max = "-1";
+    actualSliderWrath.min = "1";
+    actualSliderWrath.max = "99";
     actualSliderWrath.value = wrathShimmer;
     actualSliderWrath.step = "1";
     actualSliderWrath.oninput = function() {
@@ -537,7 +545,7 @@ var observerBrokers = new MutationObserver(callback);
 let gradient = localStorage["gradient"] || "default";
 let shimmerMode = localStorage["shimmerMode"] || "deal";
 let shimmerState = localStorage["shimmerState"] || "on";
-let goldenShimmer = localStorage["goldenShimmer"] || 150;
+let goldenShimmer = localStorage["goldenShimmer"] || 15;
 let wrathShimmer = localStorage["wrathShimmer"] || 50;
 let shimmerGolden = document.createElement("img");
 shimmerGolden.src = "img/shadedBordersGold.png";
